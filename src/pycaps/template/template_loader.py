@@ -9,9 +9,14 @@ class TemplateLoader:
     def __init__(self, template: Template|str):
         self._template: Template = TemplateFactory().create(template) if type(template) == str else template
         self._input_video_path: Optional[str] = None
+        self._output_video_path: Optional[str] = None
 
     def with_input_video(self, input_video_path: str) -> "TemplateLoader":
         self._input_video_path = input_video_path
+        return self
+
+    def with_output_video(self, output_video_path: str) -> "TemplateLoader":
+        self._output_video_path = output_video_path
         return self
 
     @overload
@@ -25,6 +30,8 @@ class TemplateLoader:
         builder = json_config_loader.load(False)
         if self._input_video_path:
             builder.with_input_video(self._input_video_path)
+        if self._output_video_path:
+            builder.with_output_video(self._output_video_path)
         if should_build_pipeline:
             return builder.build()
         return builder
